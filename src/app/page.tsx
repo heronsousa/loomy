@@ -21,7 +21,7 @@ export default async function Home() {
     },
   });
 
-  console.log(products);
+  console.log(products, newlyCreatedProducts);
 
   return (
     <>
