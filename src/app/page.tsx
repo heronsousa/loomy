@@ -39,7 +39,7 @@ export default async function Home() {
           />
         </div>
 
-        {/* <ProductList products={products} title="Mais vendidos" /> */}
+        <ProductList products={products} title="Mais vendidos" />
 
         <div className="px-5">
           <CategorySelector categories={categories} />
@@ -56,7 +56,7 @@ export default async function Home() {
           />
         </div>
 
-        {/* <ProductList products={newlyCreatedProducts} title="Novos produtos" /> */}
+        <ProductList products={newlyCreatedProducts} title="Novos produtos" />
 
         <Footer />
       </div>
