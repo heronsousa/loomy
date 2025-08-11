@@ -7,6 +7,7 @@ import { formatCentsToBRL } from "@/utils/money";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeCartProduct } from "@/actions/remove-cart-product";
 import { toast } from "sonner";
+import { decreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
 
 interface CartItemProps {
   id: string;
@@ -43,6 +44,21 @@ const CartItem = ({
     },
   });
 
+  const { mutate: decreaseQuantity } = useMutation({
+    mutationKey: ["decreaseCartProductQuantity"],
+    mutationFn: () => decreaseCartProductQuantity({ cartItemId: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erro ao diminuir quantidade do produto",
+      );
+    },
+  });
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -59,7 +75,11 @@ const CartItem = ({
             {productVariantName}
           </p>
           <div className="flex w-[100px] items-center justify-between rounded-lg border p-1">
-            <Button className="h-4 w-4" variant="ghost" onClick={() => {}}>
+            <Button
+              className="h-4 w-4"
+              variant="ghost"
+              onClick={() => decreaseQuantity()}
+            >
               <MinusIcon />
             </Button>
             <p className="text-xs font-medium">{quantity}</p>

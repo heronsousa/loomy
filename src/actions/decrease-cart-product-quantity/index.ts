@@ -2,13 +2,13 @@
 
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { removeProductCartSchema, RemoveCartProductSchema } from "./schema";
+import { decreaseCartProductQuantitySchema, DecreaseCartProductQuantitySchema } from "./schema";
 import { cartItemTable } from "@/db/schema";
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
 
-export const removeCartProduct = async (data: RemoveCartProductSchema) => {
-  removeProductCartSchema.parse(data);
+export const decreaseCartProductQuantity = async (data: DecreaseCartProductQuantitySchema) => {
+  decreaseCartProductQuantitySchema.parse(data);
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -30,10 +30,18 @@ export const removeCartProduct = async (data: RemoveCartProductSchema) => {
   }
 
   const cartDoesNotBelongToUser = cartItem.cart.userId !== session.user.id;
-
+  
   if (cartDoesNotBelongToUser) {
     throw new Error("Cart item does not belong to the user");
   }
 
-  await db.delete(cartItemTable).where(eq(cartItemTable.id, cartItem.id));
+  if (cartItem.quantity === 1) {
+    await db.delete(cartItemTable).where(eq(cartItemTable.id, cartItem.id));
+
+    return;
+  }
+
+  await db.update(cartItemTable)
+    .set({ quantity: cartItem.quantity - 1 })
+    .where(eq(cartItemTable.id, cartItem.id));
 };
