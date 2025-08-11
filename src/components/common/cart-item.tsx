@@ -8,11 +8,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeCartProduct } from "@/actions/remove-cart-product";
 import { toast } from "sonner";
 import { decreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
+import { addCartProducts } from "@/actions/add-cart-produts";
 
 interface CartItemProps {
   id: string;
   quantity: number;
   productName: string;
+  productVariantId: string;
   productVariantName: string;
   productVariantImageUrl: string;
   productVariantPriceInCents: number;
@@ -22,6 +24,7 @@ const CartItem = ({
   id,
   quantity,
   productName,
+  productVariantId,
   productVariantName,
   productVariantImageUrl,
   productVariantPriceInCents,
@@ -59,6 +62,21 @@ const CartItem = ({
     },
   });
 
+  const { mutate: incrementQuantity } = useMutation({
+    mutationKey: ["increaseCartProductQuantity"],
+    mutationFn: () => addCartProducts({ productVariantId, quantity: 1 }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erro ao aumentar quantidade do produto",
+      );
+    },
+  });
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -83,7 +101,11 @@ const CartItem = ({
               <MinusIcon />
             </Button>
             <p className="text-xs font-medium">{quantity}</p>
-            <Button className="h-4 w-4" variant="ghost" onClick={() => {}}>
+            <Button
+              className="h-4 w-4"
+              variant="ghost"
+              onClick={() => incrementQuantity()}
+            >
               <PlusIcon />
             </Button>
           </div>
