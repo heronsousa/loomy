@@ -15,6 +15,7 @@ import CartItem from "./cart-item";
 import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
 import { formatCentsToBRL } from "@/utils/money";
+import Link from "next/link";
 
 const CartMenu = () => {
   const { data: cart } = useQuery({
@@ -79,7 +80,9 @@ const CartMenu = () => {
                 <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
               </div>
 
-              <Button className="mt-5 rounded-full">Finalizar compra</Button>
+              <Button className="mt-5 rounded-full" asChild>
+                <Link href="/cart/identification">Finalizar compra</Link>
+              </Button>
             </div>
           )}
         </div>
