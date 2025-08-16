@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
-import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
+import { useEffect, useState } from "react";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -15,6 +21,13 @@ import { addAddress } from "@/actions/add-address";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getAddresses } from "@/actions/get-address";
+import { UpdateCartShippingAddressSchema } from "@/actions/update-cart-shipping-address/schema";
+import { updateCartShippingAddress } from "@/actions/update-cart-shipping-address";
+import { useRouter } from "next/navigation";
+
+interface AddressProps {
+  defaultShippingAddressId: string | null;
+}
 
 const addressSchema = z.object({
   email: z.string().email("E-mail inválido."),
@@ -41,20 +54,38 @@ const getCpfCnpjMask = (value: string) => {
   return "###.###.###-##";
 };
 
-const Addresses = () => {
-  const [selectedAddress, setSelectedAddress] = useState<string | null>();
+const Addresses = ({ defaultShippingAddressId }: AddressProps) => {
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(
+    defaultShippingAddressId,
+  );
 
+  const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { mutateAsync: createAddress } = useMutation({
-    mutationKey: ["create-shipping-address"],
-    mutationFn: addAddress,
+  const {
+    mutateAsync: updateCartAddress,
+    isPending: isUpdateCartAddressPending,
+  } = useMutation({
+    mutationKey: ["update-cart-shipping-address"],
+    mutationFn: (data: UpdateCartShippingAddressSchema) =>
+      updateCartShippingAddress(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["user-addresses"],
+        queryKey: ["cart"],
       });
     },
   });
+
+  const { mutateAsync: createAddress, isPending: isCreateAddressPending } =
+    useMutation({
+      mutationKey: ["create-shipping-address"],
+      mutationFn: addAddress,
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["user-addresses"],
+        });
+      },
+    });
 
   const { data: addresses = [] } = useQuery({
     queryKey: ["user-addresses"],
@@ -85,8 +116,27 @@ const Addresses = () => {
       toast.success("Endereço criado com sucesso!");
       form.reset();
       setSelectedAddress(newAddress.id);
+
+      await updateCartAddress({
+        shippingAddressId: newAddress.id,
+      });
     } catch (error) {
       toast.error("Erro ao criar endereço. Tente novamente.");
+      console.error(error);
+    }
+  };
+
+  const handleGoToPayment = async () => {
+    if (!selectedAddress || selectedAddress === "add_new") return;
+
+    try {
+      await updateCartAddress({
+        shippingAddressId: selectedAddress,
+      });
+      toast.success("Endereço selecionado para entrega!");
+      router.push("/cart/confirmation");
+    } catch (error) {
+      toast.error("Erro ao selecionar endereço. Tente novamente.");
       console.error(error);
     }
   };
@@ -126,9 +176,26 @@ const Addresses = () => {
           ))}
         </RadioGroup>
 
+        {selectedAddress && selectedAddress !== "add_new" && (
+          <div className="mt-4">
+            <Button
+              onClick={handleGoToPayment}
+              className="w-full"
+              disabled={isUpdateCartAddressPending}
+            >
+              {isUpdateCartAddressPending
+                ? "Processando..."
+                : "Ir para pagamento"}
+            </Button>
+          </div>
+        )}
+
         {selectedAddress === "add_new" && (
           <Form {...form}>
-            <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <form
+              className="mt-8 space-y-4"
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
               <FormField
                 control={form.control}
                 name="email"
@@ -350,8 +417,12 @@ const Addresses = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full">
-                Continuar com o pagamento
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isUpdateCartAddressPending || isCreateAddressPending}
+              >
+                Salvar endereço
               </Button>
             </form>
           </Form>
@@ -360,5 +431,5 @@ const Addresses = () => {
     </Card>
   );
 };
- 
+
 export default Addresses;

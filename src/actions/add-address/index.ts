@@ -5,6 +5,7 @@ import { addAddressSchema, AddAddressSchema } from "./schema";
 import { shippingAddressTable } from "@/db/schema";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 export async function addAddress(input: AddAddressSchema) {
   const session = await auth.api.getSession({
@@ -36,6 +37,7 @@ export async function addAddress(input: AddAddressSchema) {
     })
     .returning();
 
+  revalidatePath("/cart/identification");
 
   return shippingAddress;
 }

@@ -21,8 +21,6 @@ export default async function Home() {
     },
   });
 
-  console.log(products, newlyCreatedProducts);
-
   return (
     <>
       <Header />

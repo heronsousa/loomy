@@ -19,14 +19,13 @@ const IdentificationPage = async () => {
   const cart = await db.query.cartTable.findFirst({
     where: eq(cartTable.userId, session.user.id),
     with: {
+      shippingAddress: true,
       items: true,
-    }
-  })
-
-  console.log(cart);
+    },
+  });
 
   if (!cart || !cart.items.length) {
-    redirect('/');
+    redirect("/");
   }
 
   return (
@@ -34,7 +33,7 @@ const IdentificationPage = async () => {
       <Header />
 
       <div className="px-5">
-        <Addresses />
+        <Addresses defaultShippingAddressId={cart.shippingAddressId || null} />
       </div>
     </>
   );
