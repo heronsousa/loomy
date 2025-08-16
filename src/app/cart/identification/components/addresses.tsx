@@ -10,10 +10,11 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PatternFormat } from "react-number-format";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addAddress } from "@/actions/add-address";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { getAddresses } from "@/actions/get-address";
 
 const addressSchema = z.object({
   email: z.string().email("E-mail inválido."),
@@ -53,6 +54,11 @@ const Addresses = () => {
         queryKey: ["user-addresses"],
       });
     },
+  });
+
+  const { data: addresses = [] } = useQuery({
+    queryKey: ["user-addresses"],
+    queryFn: async () => await getAddresses(),
   });
 
   const form = useForm({
@@ -104,6 +110,20 @@ const Addresses = () => {
               </div>
             </CardContent>
           </Card>
+
+          {addresses.map((address: any) => (
+            <Card key={address.id}>
+              <CardContent>
+                <div className="flex items-center gap-2">
+                  <RadioGroupItem value={address.id} id={address.id} />
+                  <Label htmlFor={address.id} className="font-semibold">
+                    {address.recipientName} - {address.street}, {address.number}{" "}
+                    - {address.city}/{address.state}
+                  </Label>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </RadioGroup>
 
         {selectedAddress === "add_new" && (
