@@ -10,6 +10,10 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PatternFormat } from "react-number-format";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addAddress } from "@/actions/add-address";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const addressSchema = z.object({
   email: z.string().email("E-mail inválido."),
@@ -17,7 +21,7 @@ const addressSchema = z.object({
   lastName: z.string().min(1, "Sobrenome é obrigatório."),
   cpf: z.string().min(14, "CPF/CNPJ inválido."),
   phone: z.string().min(14, "Celular inválido."),
-  cep: z.string().min(9, "CEP inválido."),
+  zipCode: z.string().min(9, "CEP inválido."),
   address: z.string().min(1, "Endereço é obrigatório."),
   number: z.string().min(1, "Número é obrigatório."),
   complement: z.string().optional(),
@@ -25,6 +29,8 @@ const addressSchema = z.object({
   city: z.string().min(1, "Cidade é obrigatória."),
   state: z.string().min(1, "Estado é obrigatório."),
 });
+
+type FormValues = z.infer<typeof addressSchema>;
 
 const getCpfCnpjMask = (value: string) => {
   const digits = value.replace(/\D/g, "");
@@ -37,6 +43,18 @@ const getCpfCnpjMask = (value: string) => {
 const Addresses = () => {
   const [selectedAddress, setSelectedAddress] = useState<string | null>();
 
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: createAddress } = useMutation({
+    mutationKey: ["create-shipping-address"],
+    mutationFn: addAddress,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["user-addresses"],
+      });
+    },
+  });
+
   const form = useForm({
     resolver: zodResolver(addressSchema),
     defaultValues: {
@@ -45,7 +63,7 @@ const Addresses = () => {
       lastName: "",
       cpf: "",
       phone: "",
-      cep: "",
+      zipCode: "",
       address: "",
       number: "",
       complement: "",
@@ -55,6 +73,18 @@ const Addresses = () => {
     },
   });
 
+  const onSubmit = async (values: FormValues) => {
+    try {
+      const newAddress = await createAddress(values);
+      toast.success("Endereço criado com sucesso!");
+      form.reset();
+      setSelectedAddress(newAddress.id);
+    } catch (error) {
+      toast.error("Erro ao criar endereço. Tente novamente.");
+      console.error(error);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -62,7 +92,10 @@ const Addresses = () => {
       </CardHeader>
 
       <CardContent>
-        <RadioGroup value={selectedAddress || undefined} onValueChange={setSelectedAddress}>
+        <RadioGroup
+          value={selectedAddress || undefined}
+          onValueChange={setSelectedAddress}
+        >
           <Card>
             <CardContent>
               <div className="flex items-center gap-2">
@@ -73,16 +106,21 @@ const Addresses = () => {
           </Card>
         </RadioGroup>
 
-        {selectedAddress === 'add_new' && (
+        {selectedAddress === "add_new" && (
           <Form {...form}>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input {...field} type="email" placeholder="Email" className="h-12" />
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="Email"
+                        className="h-12"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -95,7 +133,11 @@ const Addresses = () => {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input {...field} placeholder="Primeiro nome" className="h-12" />
+                        <Input
+                          {...field}
+                          placeholder="Primeiro nome"
+                          className="h-12"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -107,7 +149,11 @@ const Addresses = () => {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input {...field} placeholder="Sobrenome" className="h-12" />
+                        <Input
+                          {...field}
+                          placeholder="Sobrenome"
+                          className="h-12"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -129,7 +175,9 @@ const Addresses = () => {
                           placeholder="CPF/CNPJ"
                           className="h-12"
                           value={field.value}
-                          onValueChange={(values) => field.onChange(values.value)}
+                          onValueChange={(values) =>
+                            field.onChange(values.value)
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -150,7 +198,9 @@ const Addresses = () => {
                           placeholder="Celular"
                           value={field.value}
                           className="h-12"
-                          onValueChange={(values) => field.onChange(values.value)}
+                          onValueChange={(values) =>
+                            field.onChange(values.value)
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -160,7 +210,7 @@ const Addresses = () => {
               </div>
               <FormField
                 control={form.control}
-                name="cep"
+                name="zipCode"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -185,7 +235,11 @@ const Addresses = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input {...field} placeholder="Endereço" className="h-12" />
+                      <Input
+                        {...field}
+                        placeholder="Endereço"
+                        className="h-12"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -198,7 +252,11 @@ const Addresses = () => {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input {...field} placeholder="Número" className="h-12" />
+                        <Input
+                          {...field}
+                          placeholder="Número"
+                          className="h-12"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -210,7 +268,11 @@ const Addresses = () => {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input {...field} placeholder="Complemento" className="h-12" />
+                        <Input
+                          {...field}
+                          placeholder="Complemento"
+                          className="h-12"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -224,7 +286,11 @@ const Addresses = () => {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input {...field} placeholder="Bairro" className="h-12" />
+                        <Input
+                          {...field}
+                          placeholder="Bairro"
+                          className="h-12"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -236,7 +302,11 @@ const Addresses = () => {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input {...field} placeholder="Cidade" className="h-12" />
+                        <Input
+                          {...field}
+                          placeholder="Cidade"
+                          className="h-12"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -248,19 +318,27 @@ const Addresses = () => {
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormControl>
-                        <Input {...field} placeholder="Estado" className="h-12" />
+                        <Input
+                          {...field}
+                          placeholder="Estado"
+                          className="h-12"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+
+              <Button type="submit" className="w-full">
+                Continuar com o pagamento
+              </Button>
             </form>
           </Form>
         )}
       </CardContent>
     </Card>
   );
-}
+};
  
 export default Addresses;

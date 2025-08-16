@@ -104,18 +104,19 @@ export const shippingAddressTable = pgTable("shipping_address", {
   userId: text("user_id")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
-  name: text().notNull(),
+  recipientName: text("recipient_name").notNull(),
   street: text().notNull(),
   number: text().notNull(),
   complement: text(),
-  neighborhood: text().notNull(),
   city: text().notNull(),
-  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
   state: text().notNull(),
+  neighborhood: text().notNull(),
   zipCode: text("zip_code").notNull(),
+  country: text().notNull(),
+  phone: text().notNull(),
+  email: text().notNull(),
+  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  recipientName: text("recipient_name").notNull(),
 });
 
 export const cartTable = pgTable("cart", {
