@@ -6,6 +6,7 @@ import {
   integer,
   timestamp,
   boolean,
+  pgEnum,
 } from "drizzle-orm/pg-core";
 
 export const userTable = pgTable("user", {
@@ -146,13 +147,82 @@ export const cartItemTable = pgTable("cart_item", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const orderStatus = pgEnum("order_status", [
+  "pending",
+  "paid",
+  "canceled",
+]);
+
+export const orderTable = pgTable("order", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  shippingAddressId: uuid("shipping_address_id")
+    .notNull()
+    .references(() => shippingAddressTable.id, { onDelete: "set null" }),
+  recipientName: text().notNull(),
+  street: text().notNull(),
+  number: text().notNull(),
+  complement: text(),
+  city: text().notNull(),
+  state: text().notNull(),
+  neighborhood: text().notNull(),
+  zipCode: text().notNull(),
+  country: text().notNull(),
+  phone: text().notNull(),
+  email: text().notNull(),
+  cpfOrCnpj: text().notNull(),
+  totalPriceInCents: integer("total_price_in_cents").notNull(),
+  status: orderStatus().notNull().default("pending"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const orderRelations = relations(orderTable, ({ one, many }) => ({
+  user: one(userTable, {
+    fields: [orderTable.userId],
+    references: [userTable.id],
+  }),
+  shippingAddress: one(shippingAddressTable, {
+    fields: [orderTable.shippingAddressId],
+    references: [shippingAddressTable.id],
+  }),
+  items: many(orderItemTable),
+}));
+
+export const orderItemTable = pgTable("order_item", {
+  id: uuid().primaryKey().defaultRandom(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orderTable.id, { onDelete: "cascade" }),
+  productVariantId: uuid("product_variant_id")
+    .notNull()
+    .references(() => productVariantTable.id, { onDelete: "restrict" }),
+  quantity: integer("quantity").notNull(),
+  priceInCents: integer("price_in_cents").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const orderItemRelations = relations(orderItemTable, ({ one }) => ({
+  order: one(orderTable, {
+    fields: [orderItemTable.orderId],
+    references: [orderTable.id],
+  }),
+  productVariant: one(productVariantTable, {
+    fields: [orderItemTable.productVariantId],
+    references: [productVariantTable.id],
+  }),
+}));
+
 export const productVariantRelations = relations(
   productVariantTable,
-  ({ one }) => ({
+  ({ one, many }) => ({
     product: one(productTable, {
       fields: [productVariantTable.productId],
       references: [productTable.id],
     }),
+    cartItems: many(cartItemTable),
+    orderItems: many(orderItemTable),
   }),
 );
 
@@ -170,11 +240,12 @@ export const productRelations = relations(productTable, ({ one, many }) => ({
 
 export const shippingAddressRelations = relations(
   shippingAddressTable,
-  ({ one }) => ({
+  ({ one, many }) => ({
     user: one(userTable, {
       fields: [shippingAddressTable.userId],
       references: [userTable.id],
     }),
+    orders: many(orderTable),
   }),
 );
 
@@ -184,6 +255,7 @@ export const userRelations = relations(userTable, ({ many, one }) => ({
     fields: [userTable.id],
     references: [cartTable.userId],
   }),
+  orders: many(orderTable),
 }));
 
 export const cartRelations = relations(cartTable, ({ one, many }) => ({
