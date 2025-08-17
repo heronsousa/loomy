@@ -133,7 +133,6 @@ const Addresses = ({ defaultShippingAddressId }: AddressProps) => {
       await updateCartAddress({
         shippingAddressId: selectedAddress,
       });
-      toast.success("Endereço selecionado para entrega!");
       router.push("/cart/confirmation");
     } catch (error) {
       toast.error("Erro ao selecionar endereço. Tente novamente.");

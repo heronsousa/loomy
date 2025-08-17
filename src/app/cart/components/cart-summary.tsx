@@ -63,6 +63,9 @@ const CartSummary = ({
               <div className="flex flex-col gap-1">
                 <p className="text-sm font-semibold">{product.name}</p>
                 <p className="text-muted-foreground text-xs font-medium">
+                  {product.quantity}
+                </p>
+                <p className="text-muted-foreground text-xs font-medium">
                   {product.variantName}
                 </p>
               </div>
