@@ -1,10 +1,11 @@
 'use server';
 
-import { cartTable } from "@/db/schema";
-import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+
+import { db } from "@/db";
+import { cartTable } from "@/db/schema";
+import { auth } from "@/lib/auth";
 
 export const getCart = async () => {
   const session = await auth.api.getSession({

@@ -1,12 +1,12 @@
 import { relations } from "drizzle-orm";
 import {
-  pgTable,
-  uuid,
-  text,
-  integer,
-  timestamp,
   boolean,
+  integer,
   pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 export const userTable = pgTable("user", {

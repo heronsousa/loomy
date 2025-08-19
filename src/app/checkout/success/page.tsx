@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
+import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,8 +14,6 @@ import {
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
-import Footer from "@/components/common/footer";
-import { useRouter } from "next/navigation";
 
 const CheckoutSuccessPage = () => {
   const router = useRouter();

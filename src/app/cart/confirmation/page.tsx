@@ -3,14 +3,13 @@ import { redirect } from "next/navigation";
 
 import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/db";
 import { auth } from "@/lib/auth";
+import { formatAddress } from "@/utils/formatAddress";
 
 import CartSummary from "../components/cart-summary";
 import FinishOrder from "./components/finish-order";
-import { formatAddress } from "@/utils/formatAddress";
 
 const ConfirmationPage = async () => {
   const session = await auth.api.getSession({

@@ -1,11 +1,12 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { finishOrder } from "@/actions/finish-order";
-import { createCheckoutSession } from "@/actions/create-checkout-session";
 import { loadStripe } from "@stripe/stripe-js";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+
+import { createCheckoutSession } from "@/actions/create-checkout-session";
+import { finishOrder } from "@/actions/finish-order";
+import { Button } from "@/components/ui/button";
 
 const FinishOrder = () => {
   const queryClient = useQueryClient();

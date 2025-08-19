@@ -1,11 +1,13 @@
 'use client';
 
 import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
+import Link from "next/link";
+
+import { authClient } from "@/lib/auth-client";
+
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
 
 const UserMenu = () => {
   const { data: session } = authClient.useSession();

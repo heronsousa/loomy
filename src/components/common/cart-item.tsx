@@ -1,14 +1,16 @@
 'use client';
 
-import Image from "next/image";
-import { Button } from "../ui/button";
-import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
-import { formatCentsToBRL } from "@/utils/money";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { removeCartProduct } from "@/actions/remove-cart-product";
+import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
-import { decreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
+
 import { addCartProducts } from "@/actions/add-cart-produts";
+import { decreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
+import { removeCartProduct } from "@/actions/remove-cart-product";
+import { formatCentsToBRL } from "@/utils/money";
+
+import { Button } from "../ui/button";
 
 interface CartItemProps {
   id: string;

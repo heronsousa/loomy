@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import UserMenu from "./user-menu";
+
 import CartMenu from "./cart-menu";
+import UserMenu from "./user-menu";
 
 export const Header = () => {
   return (

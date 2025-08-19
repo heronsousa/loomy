@@ -1,7 +1,15 @@
 'use client';
 
+import { useQuery } from "@tanstack/react-query";
 import { ShoppingBasketIcon } from "lucide-react";
+import Link from "next/link";
+
+import { getCart } from "@/actions/get-cart";
+import { formatCentsToBRL } from "@/utils/money";
+
 import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
+import { Separator } from "../ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -9,13 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { useQuery } from "@tanstack/react-query";
-import { getCart } from "@/actions/get-cart";
 import CartItem from "./cart-item";
-import { Separator } from "../ui/separator";
-import { ScrollArea } from "../ui/scroll-area";
-import { formatCentsToBRL } from "@/utils/money";
-import Link from "next/link";
 
 const CartMenu = () => {
   const { data: cart } = useQuery({

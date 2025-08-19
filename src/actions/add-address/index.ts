@@ -1,11 +1,13 @@
 'use server';
 
-import { db } from "@/db";
-import { addAddressSchema, AddAddressSchema } from "./schema";
-import { shippingAddressTable } from "@/db/schema";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+
+import { db } from "@/db";
+import { shippingAddressTable } from "@/db/schema";
+import { auth } from "@/lib/auth";
+
+import { AddAddressSchema,addAddressSchema } from "./schema";
 
 export async function addAddress(input: AddAddressSchema) {
   const session = await auth.api.getSession({

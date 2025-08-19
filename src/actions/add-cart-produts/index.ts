@@ -1,11 +1,13 @@
 "use server";
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { addCartProductsSchema, AddCartProductsSchema } from "./schema";
 import { eq } from "drizzle-orm";
-import { cartItemTable, cartTable, productVariantTable } from "@/db/schema";
+import { headers } from "next/headers";
+
 import { db } from "@/db";
+import { cartItemTable, cartTable, productVariantTable } from "@/db/schema";
+import { auth } from "@/lib/auth";
+
+import { AddCartProductsSchema,addCartProductsSchema } from "./schema";
 
 export const addCartProducts = async (data: AddCartProductsSchema) => {
   addCartProductsSchema.parse(data);

@@ -1,29 +1,30 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { PatternFormat } from "react-number-format";
+import { toast } from "sonner";
+import { z } from "zod";
+
+import { addAddress } from "@/actions/add-address";
+import { getAddresses } from "@/actions/get-address";
+import { updateCartShippingAddress } from "@/actions/update-cart-shipping-address";
+import { UpdateCartShippingAddressSchema } from "@/actions/update-cart-shipping-address/schema";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useEffect, useState } from "react";
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PatternFormat } from "react-number-format";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addAddress } from "@/actions/add-address";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { getAddresses } from "@/actions/get-address";
-import { UpdateCartShippingAddressSchema } from "@/actions/update-cart-shipping-address/schema";
-import { updateCartShippingAddress } from "@/actions/update-cart-shipping-address";
-import { useRouter } from "next/navigation";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface AddressProps {
   defaultShippingAddressId: string | null;
@@ -160,7 +161,7 @@ const Addresses = ({ defaultShippingAddressId }: AddressProps) => {
             </CardContent>
           </Card>
 
-          {addresses.map((address: any) => (
+          {addresses.map((address) => (
             <Card key={address.id}>
               <CardContent>
                 <div className="flex items-center gap-2">
