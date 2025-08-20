@@ -1,8 +1,7 @@
 import { Header } from "@/components/common/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import SignInForm from "./components/sign-in";
-import SignUpForm from "./components/sign-up";
+import { SignInForm, SignUpForm } from "@/modules/authentication";
 
 const Authentication = async () => {
   return (

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ShoppingBasketIcon } from "lucide-react";
 import Link from "next/link";
 
-import { getCart } from "@/actions/get-cart";
+import { getCart } from "@/modules/cart";
 import { formatCentsToBRL } from "@/utils/money";
 
 import { Button } from "../ui/button";

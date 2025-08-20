@@ -19,7 +19,7 @@ const CheckoutSuccessPage = () => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col justify-between h-screen">
+    <div className="flex h-screen flex-col justify-between">
       <Header />
 
       <Dialog open={true} onOpenChange={() => router.push("/")}>
@@ -38,8 +38,8 @@ const CheckoutSuccessPage = () => {
           </DialogDescription>
 
           <DialogFooter>
-            <Button className="rounded-full" size="lg">
-              Ver meus pedidos
+            <Button className="rounded-full" size="lg" asChild>
+              <Link href="/orders">Ver meus pedidos</Link>
             </Button>
             <Button
               className="rounded-full"

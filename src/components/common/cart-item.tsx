@@ -5,12 +5,14 @@ import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
-import { addCartProducts } from "@/actions/add-cart-produts";
-import { decreaseCartProductQuantity } from "@/actions/decrease-cart-product-quantity";
-import { removeCartProduct } from "@/actions/remove-cart-product";
 import { formatCentsToBRL } from "@/utils/money";
 
 import { Button } from "../ui/button";
+import {
+  removeCartProduct,
+  decreaseCartProductQuantity,
+  addCartProducts,
+} from "@/modules/cart";
 
 interface CartItemProps {
   id: string;
