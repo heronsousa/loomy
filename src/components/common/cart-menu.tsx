@@ -1,10 +1,8 @@
 'use client';
 
-import { useQuery } from "@tanstack/react-query";
 import { ShoppingBasketIcon } from "lucide-react";
 import Link from "next/link";
 
-import { getCart } from "@/modules/cart";
 import { formatCentsToBRL } from "@/utils/money";
 
 import { Button } from "../ui/button";
@@ -18,12 +16,10 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import CartItem from "./cart-item";
+import { useCart } from "@/hooks/queries/use-cart";
 
 const CartMenu = () => {
-  const { data: cart } = useQuery({
-    queryKey: ["cart"],
-    queryFn: async () => getCart(),
-  });
+  const { data: cart } = useCart();
 
   return (
     <Sheet>
@@ -37,29 +33,29 @@ const CartMenu = () => {
           <SheetTitle>Carrinho</SheetTitle>
         </SheetHeader>
 
-        <div className="flex h-full flex-col px-5 pb-5">
-          <div className="flex h-full max-h-full flex-col overflow-hidden">
-            <ScrollArea className="h-full">
-              <div className="flex h-full flex-col gap-8">
-                {cart?.items.map((item) => (
-                  <CartItem
-                    key={item.id}
-                    id={item.id}
-                    productVariantId={item.productVariant.id}
-                    productName={item.productVariant.product.name}
-                    productVariantName={item.productVariant.name}
-                    productVariantImageUrl={item.productVariant.imageUrl}
-                    productVariantPriceInCents={
-                      item.productVariant.priceInCents
-                    }
-                    quantity={item.quantity}
-                  />
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
+        {!!cart?.items?.length && (
+          <div className="flex h-full flex-col px-5 pb-5">
+            <div className="flex h-full max-h-full flex-col overflow-hidden">
+              <ScrollArea className="h-full">
+                <div className="flex h-full flex-col gap-8">
+                  {cart.items.map((item) => (
+                    <CartItem
+                      key={item.id}
+                      id={item.id}
+                      productVariantId={item.productVariant.id}
+                      productName={item.productVariant.product.name}
+                      productVariantName={item.productVariant.name}
+                      productVariantImageUrl={item.productVariant.imageUrl}
+                      productVariantPriceInCents={
+                        item.productVariant.priceInCents
+                      }
+                      quantity={item.quantity}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
 
-          {cart?.items && cart?.items.length > 0 && (
             <div className="flex flex-col gap-4">
               <Separator />
 
@@ -86,8 +82,8 @@ const CartMenu = () => {
                 <Link href="/cart/identification">Finalizar compra</Link>
               </Button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );
