@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
 import { toast } from "sonner";
@@ -21,12 +21,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { 
-  addAddress, 
+import {
+  addAddress,
   getAddresses,
   updateCartShippingAddress,
   UpdateCartShippingAddressSchema,
 } from "../";
+import { Loader2 } from "lucide-react";
+import { useCep } from "@/hooks/mutations/use-cep";
 
 interface AddressProps {
   defaultShippingAddressId: string | null;
@@ -39,7 +41,7 @@ const addressSchema = z.object({
   cpf: z.string().min(14, "CPF/CNPJ inválido."),
   phone: z.string().min(14, "Celular inválido."),
   zipCode: z.string().min(9, "CEP inválido."),
-  address: z.string().min(1, "Endereço é obrigatório."),
+  address: z.string().min(1, "Rua é obrigatório."),
   number: z.string().min(1, "Número é obrigatório."),
   complement: z.string().optional(),
   neighborhood: z.string().min(1, "Bairro é obrigatório."),
@@ -112,6 +114,19 @@ export const Addresses = ({ defaultShippingAddressId }: AddressProps) => {
       state: "",
     },
   });
+
+  const cep = form.watch("zipCode");
+  const { data: address, isFetching } = useCep(cep);
+
+  useEffect(() => {
+    if (address) {
+      form.setValue("address", address.logradouro || "");
+      form.setValue("neighborhood", address.bairro || "");
+      form.setValue("city", address.localidade || "");
+      form.setValue("state", address.uf || "");
+      form.setValue("complement", address.complemento || "");
+    }
+  }, [address, form]);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -302,18 +317,25 @@ export const Addresses = ({ defaultShippingAddressId }: AddressProps) => {
                 name="zipCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormControl>
-                      <PatternFormat
-                        {...field}
-                        customInput={Input}
-                        format="#####-###"
-                        mask="_"
-                        placeholder="CEP"
-                        className="h-12"
-                        value={field.value}
-                        onValueChange={(values) => field.onChange(values.value)}
-                      />
-                    </FormControl>
+                    <div className="relative">
+                      <FormControl>
+                        <PatternFormat
+                          {...field}
+                          customInput={Input}
+                          format="#####-###"
+                          mask="_"
+                          placeholder="CEP"
+                          className="h-12 pr-10"
+                          value={field.value}
+                          onValueChange={(values) =>
+                            field.onChange(values.value)
+                          }
+                        />
+                      </FormControl>
+                      {isFetching && (
+                        <Loader2 className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin" />
+                      )}
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -324,11 +346,7 @@ export const Addresses = ({ defaultShippingAddressId }: AddressProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Endereço"
-                        className="h-12"
-                      />
+                      <Input {...field} placeholder="Rua" className="h-12" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -368,23 +386,19 @@ export const Addresses = ({ defaultShippingAddressId }: AddressProps) => {
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="neighborhood"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormControl>
+                      <Input {...field} placeholder="Bairro" className="h-12" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="flex gap-2">
-                <FormField
-                  control={form.control}
-                  name="neighborhood"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Bairro"
-                          className="h-12"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="city"
@@ -433,4 +447,3 @@ export const Addresses = ({ defaultShippingAddressId }: AddressProps) => {
     </Card>
   );
 };
-
