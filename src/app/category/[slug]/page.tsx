@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
 import { Header } from "@/components/common/header";
@@ -40,5 +39,5 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
     </>
   );
 };
- 
+
 export default CategoryPage;

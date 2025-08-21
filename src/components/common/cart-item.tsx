@@ -1,6 +1,5 @@
 'use client';
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -8,11 +7,9 @@ import { toast } from "sonner";
 import { formatCentsToBRL } from "@/utils/money";
 
 import { Button } from "../ui/button";
-import {
-  removeCartProduct,
-  decreaseCartProductQuantity,
-  addCartProducts,
-} from "@/modules/cart";
+import { useAddCartProducts } from "@/hooks/mutations/use-add-to-cart";
+import { useRemoveProductFromCart } from "@/hooks/mutations/use-remove-product-from-cart";
+import { useDecreaseProductFromCart } from "@/hooks/mutations/use-decrease-product-from-cart";
 
 interface CartItemProps {
   id: string;
@@ -33,53 +30,36 @@ const CartItem = ({
   productVariantImageUrl,
   productVariantPriceInCents,
 }: CartItemProps) => {
-  const queryClient = useQueryClient();
+  const removeProduct = useRemoveProductFromCart(id);
+  const decreaseProduct = useDecreaseProductFromCart(id);
+  const incrementQuantity = useAddCartProducts(productVariantId);
 
-  const { mutate: removeProduct } = useMutation({
-    mutationKey: ["removeCartProduct"],
-    mutationFn: () => removeCartProduct({ cartItemId: id }),
-    onSuccess: () => {
-      toast.success("Produto removido do carrinho");
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-    onError: (error) => {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Erro ao remover produto do carrinho",
-      );
-    },
-  });
+  const handleRemove = () => {
+    removeProduct.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Produto removido do carrinho.");
+      },
+      onError: () => {
+        toast.error("Erro ao remover produto do carrinho.");
+      },
+    });
+  };
 
-  const { mutate: decreaseQuantity } = useMutation({
-    mutationKey: ["decreaseCartProductQuantity"],
-    mutationFn: () => decreaseCartProductQuantity({ cartItemId: id }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-    onError: (error) => {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Erro ao diminuir quantidade do produto",
-      );
-    },
-  });
+  const handleDecrease = () => {
+    decreaseProduct.mutate(undefined, {
+      onError: () => {
+        toast.success("Erro ao diminuir quantidade do produto");
+      },
+    });
+  };
 
-  const { mutate: incrementQuantity } = useMutation({
-    mutationKey: ["increaseCartProductQuantity"],
-    mutationFn: () => addCartProducts({ productVariantId, quantity: 1 }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
-    },
-    onError: (error) => {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Erro ao aumentar quantidade do produto",
-      );
-    },
-  });
+  const handleIncrement = () => {
+    incrementQuantity.mutate(1, {
+      onError: () => {
+        toast.success("Erro ao aumentar quantidade do produto");
+      },
+    });
+  };
 
   return (
     <div className="flex items-center justify-between">
@@ -100,7 +80,7 @@ const CartItem = ({
             <Button
               className="h-4 w-4"
               variant="ghost"
-              onClick={() => decreaseQuantity()}
+              onClick={handleDecrease}
             >
               <MinusIcon />
             </Button>
@@ -108,7 +88,7 @@ const CartItem = ({
             <Button
               className="h-4 w-4"
               variant="ghost"
-              onClick={() => incrementQuantity()}
+              onClick={handleIncrement}
             >
               <PlusIcon />
             </Button>
@@ -116,7 +96,7 @@ const CartItem = ({
         </div>
       </div>
       <div className="flex flex-col items-end justify-center gap-2">
-        <Button variant="outline" size="icon" onClick={() => removeProduct()}>
+        <Button variant="outline" size="icon" onClick={handleRemove}>
           <TrashIcon />
         </Button>
         <p className="text-sm font-bold">
