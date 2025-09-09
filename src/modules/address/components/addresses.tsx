@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -21,14 +22,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useCep } from "@/hooks/mutations/use-cep";
+
 import {
   addAddress,
   getAddresses,
   updateCartShippingAddress,
   UpdateCartShippingAddressSchema,
 } from "../";
-import { Loader2 } from "lucide-react";
-import { useCep } from "@/hooks/mutations/use-cep";
 
 interface AddressProps {
   defaultShippingAddressId: string | null;

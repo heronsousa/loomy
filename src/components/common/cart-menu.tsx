@@ -3,6 +3,7 @@
 import { ShoppingBasketIcon } from "lucide-react";
 import Link from "next/link";
 
+import { useCart } from "@/hooks/queries/use-cart";
 import { formatCentsToBRL } from "@/utils/money";
 
 import { Button } from "../ui/button";
@@ -16,10 +17,11 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import CartItem from "./cart-item";
-import { useCart } from "@/hooks/queries/use-cart";
 
 const CartMenu = () => {
   const { data: cart } = useCart();
+
+  if (!cart) return null;
 
   return (
     <Sheet>
@@ -33,7 +35,7 @@ const CartMenu = () => {
           <SheetTitle>Carrinho</SheetTitle>
         </SheetHeader>
 
-        {!!cart?.items?.length && (
+        {!!cart.items?.length && (
           <div className="flex h-full flex-col px-5 pb-5">
             <div className="flex h-full max-h-full flex-col overflow-hidden">
               <ScrollArea className="h-full">
@@ -61,7 +63,7 @@ const CartMenu = () => {
 
               <div className="flex items-center justify-between text-xs font-medium">
                 <p>Subtotal</p>
-                <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
+                <p>{formatCentsToBRL(cart.totalPriceInCents ?? 0)}</p>
               </div>
 
               <Separator />
@@ -75,7 +77,7 @@ const CartMenu = () => {
 
               <div className="flex items-center justify-between text-xs font-medium">
                 <p>Total</p>
-                <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
+                <p>{formatCentsToBRL(cart.totalPriceInCents ?? 0)}</p>
               </div>
 
               <Button className="mt-5 rounded-full" asChild>

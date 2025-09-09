@@ -4,12 +4,12 @@ import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 
+import { useAddCartProducts } from "@/hooks/mutations/use-add-to-cart";
+import { useDecreaseProductFromCart } from "@/hooks/mutations/use-decrease-product-from-cart";
+import { useRemoveProductFromCart } from "@/hooks/mutations/use-remove-product-from-cart";
 import { formatCentsToBRL } from "@/utils/money";
 
 import { Button } from "../ui/button";
-import { useAddCartProducts } from "@/hooks/mutations/use-add-to-cart";
-import { useRemoveProductFromCart } from "@/hooks/mutations/use-remove-product-from-cart";
-import { useDecreaseProductFromCart } from "@/hooks/mutations/use-decrease-product-from-cart";
 
 interface CartItemProps {
   id: string;

@@ -3,10 +3,9 @@ import { redirect } from "next/navigation";
 import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatAddress } from "@/utils/formatAddress";
-
-import { CartSummary, FinishOrder, getCartinfo } from "@/modules/cart";
 import { getSessionUserId } from "@/lib/get-session-user-id";
+import { CartSummary, FinishOrder, getCartinfo } from "@/modules/cart";
+import { formatAddress } from "@/utils/formatAddress";
 import { getCartTotalInCents } from "@/utils/get-cart-total-in-cents";
 
 const ConfirmationPage = async () => {

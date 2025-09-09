@@ -1,8 +1,9 @@
 "server only";
 
+import { desc, eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { productTable, productVariantTable } from "@/db/schema";
-import { desc, eq } from "drizzle-orm";
 
 type ProductsDTO = (typeof productTable.$inferSelect & {
   variants: (typeof productVariantTable.$inferSelect)[];

@@ -4,11 +4,11 @@ import CategorySelector from "@/components/common/category-selector";
 import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
 import ProductList from "@/components/common/product-list";
+import { getCategories } from "@/modules/category";
 import {
   getNewlyCreatedProducts,
   getProducts,
 } from "@/modules/product/queries/get";
-import { getCategories } from "@/modules/category";
 
 export default async function Home() {
   const [products, newlyCreatedProducts, categories] = await Promise.all([

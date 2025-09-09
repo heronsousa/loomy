@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 import { getUseCartQueryKey } from "../queries/use-cart";
-import axios from "axios";
 
 const decreaseProductFromCart = async (cartItemId: string) => {
   try {

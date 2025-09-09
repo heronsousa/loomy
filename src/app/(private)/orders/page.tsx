@@ -1,8 +1,7 @@
 import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
 import { getSessionUserId } from "@/lib/get-session-user-id";
-
-import { Orders, getOrders } from "@/modules/orders";
+import { getOrders,Orders } from "@/modules/orders";
 
 const OrdersPage = async ({ }) => {
   const userId = await getSessionUserId();

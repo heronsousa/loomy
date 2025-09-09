@@ -2,10 +2,9 @@ import { redirect } from "next/navigation";
 
 import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
-
+import { getSessionUserId } from "@/lib/get-session-user-id";
 import { Addresses } from "@/modules/address";
 import { CartSummary, getCartinfo } from "@/modules/cart";
-import { getSessionUserId } from "@/lib/get-session-user-id";
 import { getCartTotalInCents } from "@/utils/get-cart-total-in-cents";
 
 const IdentificationPage = async () => {

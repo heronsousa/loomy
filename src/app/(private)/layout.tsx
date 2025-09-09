@@ -1,6 +1,7 @@
-import { getSessionUserId } from "@/lib/get-session-user-id";
 import { redirect } from "next/navigation";
 import React, { ReactElement } from "react";
+
+import { getSessionUserId } from "@/lib/get-session-user-id";
 
 interface PrivateLayoutProps {
   children: ReactElement<{ userId: string }>

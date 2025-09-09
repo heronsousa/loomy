@@ -7,9 +7,8 @@ import { Header } from "@/components/common/header";
 import ProductList from "@/components/common/product-list";
 import { db } from "@/db";
 import { productTable, productVariantTable } from "@/db/schema";
-import { formatCentsToBRL } from "@/utils/money";
-
 import { ProductActions, VariantSelector } from "@/modules/product";
+import { formatCentsToBRL } from "@/utils/money";
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;

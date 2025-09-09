@@ -1,8 +1,9 @@
 'server only';
 
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { categoryTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 export const getCategories = async () => {
   return await db.query.categoryTable.findMany({});

@@ -4,8 +4,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
-import { finishOrder, createCheckoutSession } from "@/modules/checkout";
 import { Button } from "@/components/ui/button";
+import { createCheckoutSession,finishOrder } from "@/modules/checkout";
 
 export const FinishOrder = () => {
   const queryClient = useQueryClient();
