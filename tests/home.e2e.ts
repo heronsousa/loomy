@@ -1,16 +1,39 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('has title', async ({ page }) => {
-  await page.goto('/');
+test("has title", async ({ page }) => {
+  await page.goto("/");
   await expect(page).toHaveTitle(/Loomy/);
 });
 
-// test('get started link', async ({ page }) => {
-//   await page.goto('https://playwright.dev/');
+test("renders main header", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: /Loomy/ })).toBeVisible();
+});
 
-//   // Click the get started link.
-//   await page.getByRole('link', { name: 'Get started' }).click();
+test("shows product list", async ({ page }) => {
+  await page.goto("/");
+  const productCards = await page.getByRole("listitem").all();
+  expect(productCards.length).toBeGreaterThan(0);
+});
 
-//   // Expects page to have a heading with the name of Installation.
-//   await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
-// });
+test("can open product details", async ({ page }) => {
+  await page.goto("/");
+  const firstProduct = page.getByRole("listitem").first();
+  await firstProduct.click();
+  await expect(page.getByRole("heading", { level: 2 })).toBeVisible();
+});
+
+test("renders all categories", async ({ page }) => {
+  await page.goto("/");
+  const categoryNames = [
+    "Acessórios",
+    "Bermuda & Shorts",
+    "Calças",
+    "Camisetas",
+    "Jaquetas & Moletons",
+    "Tênis",
+  ];
+  for (const name of categoryNames) {
+    await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
+  }
+});

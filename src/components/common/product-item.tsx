@@ -16,33 +16,35 @@ const ProductItem = ({ product, textContainerClassname }: ProductItemProps) => {
   const firstVariant = product.variants[0];
 
   return (
-    <Link
-      href={`/product/${firstVariant.slug}`}
-      className="flex flex-col gap-4"
-    >
-      <Image
-        src={firstVariant.imageUrl}
-        alt={firstVariant.name}
-        sizes="100vw"
-        width={0}
-        height={0}
-        className="h-auto w-full rounded-3xl"
-      />
-      <div
-        className={cn(
-          "flex max-w-[200px] flex-col gap-1",
-          textContainerClassname,
-        )}
+    <li>
+      <Link
+        href={`/product/${firstVariant.slug}`}
+        className="flex flex-col gap-4"
       >
-        <p className="truncate text-sm font-medium">{product.name}</p>
-        <p className="text-muted-foreground truncate text-xs font-medium">
-          {product.description}
-        </p>
-        <p className="truncate text-sm font-semibold">
-          {formatCentsToBRL(firstVariant.priceInCents)}
-        </p>
-      </div>
-    </Link>
+        <Image
+          src={firstVariant.imageUrl}
+          alt={firstVariant.name}
+          sizes="100vw"
+          width={0}
+          height={0}
+          className="h-auto w-full rounded-3xl"
+        />
+        <div
+          className={cn(
+            "flex max-w-[200px] flex-col gap-1",
+            textContainerClassname,
+          )}
+        >
+          <p className="truncate text-sm font-medium">{product.name}</p>
+          <p className="text-muted-foreground truncate text-xs font-medium">
+            {product.description}
+          </p>
+          <p className="truncate text-sm font-semibold">
+            {formatCentsToBRL(firstVariant.priceInCents)}
+          </p>
+        </div>
+      </Link>
+    </li>
   );
 };
 
